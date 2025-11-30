@@ -1,0 +1,11 @@
+{
+    "require": {
+        "php": ">=7.4",
+        "php-ai/php-ml": "^0.10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    }
+}
