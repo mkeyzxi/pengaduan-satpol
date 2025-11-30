@@ -1,88 +1,100 @@
 <?php
 // functions.php
 require 'vendor/autoload.php';
-
 use Phpml\FeatureExtraction\TokenCountVectorizer;
 use Phpml\Tokenization\WhitespaceTokenizer;
 use Phpml\FeatureExtraction\TfIdfTransformer;
-use Phpml\Classification\NaiveBayes;
+use Sastrawi\Stemmer\StemmerFactory;
 
-function normalize_text($text)
-{
-	// lowercase
-	$t = mb_strtolower($text, 'UTF-8');
-	// remove URLs, mentions, numbers, punctuation
-	$t = preg_replace('#https?://\S+#', ' ', $t);
-	$t = preg_replace('/[^a-z0-9\s]/u', ' ', $t);
-	// collapse spaces
-	$t = preg_replace('/\s+/u', ' ', $t);
-	$t = trim($t);
-	return $t;
+/**
+ * Normalisasi dasar: lowercase, hapus URL, non alnum (tetap spasi), collapse spaces
+ */
+function normalize_text($text) {
+    $t = mb_strtolower($text, 'UTF-8');
+    $t = preg_replace('#https?://\S+#', ' ', $t);
+    // pertahankan huruf a-z dan angka serta spasi (bahasa indonesia dalam ascii)
+    $t = preg_replace('/[^a-z0-9\s]/u', ' ', $t);
+    $t = preg_replace('/\s+/u', ' ', $t);
+    $t = trim($t);
+    return $t;
 }
 
-function tokenize_and_filter($text)
-{
-	// simple tokenizer: split whitespace
-	$text = normalize_text($text);
-	$tokens = explode(' ', $text);
-	// basic stopwords (bahasa indonesia minimal)
-	$stopwords = [
-		'yang',
-		'dan',
-		'di',
-		'ke',
-		'dari',
-		'pada',
-		'dengan',
-		'untuk',
-		'sebagai',
-		'itu',
-		'ini',
-		'adalah',
-		'saya',
-		'anda',
-		'kami',
-		'atau',
-		'ke',
-		'dgn',
-		'yg',
-		'tdk',
-		'tidak'
-	];
-	$result = [];
-	foreach ($tokens as $t) {
-		$t = trim($t);
-		if ($t === '' || in_array($t, $stopwords)) continue;
-		$result[] = $t;
-	}
-	return $result;
+/**
+ * Stem bahasa Indonesia (Sastrawi)
+ */
+function stem_text($text) {
+    static $stemmer = null;
+    if ($stemmer === null) {
+        $factory = new StemmerFactory();
+        $stemmer = $factory->createStemmer();
+    }
+    return $stemmer->stem($text);
 }
 
-// fungsi untuk menyimpan/panggil model (vectorizer + transformer + classifier)
-function save_model($path, $vectorizer, $tfidf, $classifier)
-{
-	$data = [
-		'vectorizer' => $vectorizer,
-		'tfidf' => $tfidf,
-		'classifier' => $classifier
-	];
-	file_put_contents($path, serialize($data));
+/**
+ * Tokenize + remove stopwords basic
+ * Mengembalikan array tokens
+ */
+function tokenize_and_filter($text) {
+    $text = normalize_text($text);
+    // stemming sebelum tokenisasi -> bisa juga setelah; kita stem pada frasa utuh
+    $text = stem_text($text);
+
+    $tokens = explode(' ', $text);
+    $stopwords = [
+        'yang','dan','di','ke','dari','pada','dengan','untuk','sebagai','itu','ini','adalah',
+        'saya','anda','kami','atau','yg','tdk','tidak','dgn','ga','gak','aja','sdh','sudah'
+    ];
+    $out = [];
+    foreach ($tokens as $t) {
+        $t = trim($t);
+        if ($t === '' || in_array($t, $stopwords)) continue;
+        $out[] = $t;
+    }
+    return $out;
 }
 
-function load_model($path)
-{
-	if (!file_exists($path)) return null;
-	$data = @unserialize(file_get_contents($path));
-	if (!is_array($data)) return null;
-	return $data;
+/**
+ * Generate ngrams (unigram + bigram) -> setiap ngram digabung jadi token dengan underscore
+ * Output: array tokens (strings)
+ */
+function gen_ngrams(array $tokens, $minN = 1, $maxN = 2) {
+    $out = [];
+    $len = count($tokens);
+    for ($n = $minN; $n <= $maxN; $n++) {
+        for ($i = 0; $i <= $len - $n; $i++) {
+            $ng = array_slice($tokens, $i, $n);
+            $out[] = implode('_', $ng);
+        }
+    }
+    return $out;
 }
 
-function prepare_samples_from_texts(array $texts)
-{
-	// returns array of strings (preprocessed)
-	$out = [];
-	foreach ($texts as $t) {
-		$out[] = normalize_text($t);
-	}
-	return $out;
+/**
+ * Prepare a single sample string that will be given to TokenCountVectorizer (whitespace tokenization).
+ * We join tokens with spaces, tokens themselves can be ngram tokens like 'sampah_tumpuk'
+ */
+function prepare_sample_string($rawText) {
+    $tokens = tokenize_and_filter($rawText);
+    $ngrams = gen_ngrams($tokens, 1, 2); // unigram + bigram
+    return implode(' ', $ngrams);
+}
+
+/**
+ * Save / load model (vectorizer, tfidf, classifier)
+ */
+function save_model($path, $vectorizer, $tfidf, $classifier) {
+    $data = [
+        'vectorizer' => $vectorizer,
+        'tfidf' => $tfidf,
+        'classifier' => $classifier
+    ];
+    file_put_contents($path, serialize($data));
+}
+
+function load_model($path) {
+    if (!file_exists($path)) return null;
+    $data = @unserialize(file_get_contents($path));
+    if (!is_array($data)) return null;
+    return $data;
 }

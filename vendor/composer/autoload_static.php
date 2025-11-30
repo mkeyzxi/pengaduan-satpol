@@ -20,6 +20,20 @@ class ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262
         ),
     );
 
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/../..' . '/src',
+    );
+
+    public static $prefixesPsr0 = array (
+        'S' => 
+        array (
+            'Sastrawi\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/sastrawi/sastrawi/src',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
@@ -29,6 +43,8 @@ class ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit161063ac4ca51fc49e6bcb5a58487262::$classMap;
 
         }, null, ClassLoader::class);

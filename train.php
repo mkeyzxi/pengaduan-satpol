@@ -12,36 +12,33 @@ use Phpml\Classification\NaiveBayes;
 $modelFile = __DIR__ . '/model/satpolpp_model.bin';
 if (!is_dir(__DIR__ . '/model')) mkdir(__DIR__ . '/model', 0755, true);
 
-// ambil data latih dari DB
+// ambil data latih
 $stmt = $pdo->query("SELECT text, label FROM training_data");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 if (count($rows) < 2) {
     echo "Butuh minimal 2 data latih. Tambahkan data ke tabel training_data.\n";
     exit;
 }
 
-$texts = [];
+$samples = [];
 $labels = [];
 foreach ($rows as $r) {
-    $texts[] = normalize_text($r['text']);
+    $samples[] = prepare_sample_string($r['text']); // now preprocessed + ngrams
     $labels[] = $r['label'];
 }
 
-// Vectorizer & TF-IDF
+// vectorizer (whitespace tokenizer)
 $vectorizer = new TokenCountVectorizer(new WhitespaceTokenizer());
-$vectorizer->fit($texts);
-$vectorizer->transform($texts); // membuat representasi count
+$vectorizer->fit($samples);
+$vectorizer->transform($samples);
 
 $tfidf = new TfIdfTransformer();
-$tfidf->fit($texts);
-$tfidf->transform($texts);
+$tfidf->fit($samples);
+$tfidf->transform($samples);
 
-// train NaiveBayes
 $classifier = new NaiveBayes();
-$classifier->train($texts, $labels);
+$classifier->train($samples, $labels);
 
-// simpan model (serialize vectorizer, tfidf, classifier)
 save_model($modelFile, $vectorizer, $tfidf, $classifier);
 
 echo "Model dilatih dan disimpan di: $modelFile\n";
