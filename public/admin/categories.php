@@ -7,19 +7,19 @@ only_role(['admin']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
     $nama = clean($_POST['nama']);
-    $pdo->prepare("INSERT INTO kategori (nama) VALUES (?)")->execute([$nama]);
+    $pdo->prepare("INSERT INTO kategori_pengaduan (nama) VALUES (?)")->execute([$nama]);
     header("Location: categories.php");
     exit;
 }
 
 if (isset($_GET['del'])) {
     $id = intval($_GET['del']);
-    $pdo->prepare("DELETE FROM kategori WHERE id = ?")->execute([$id]);
+    $pdo->prepare("DELETE FROM kategori_pengaduan WHERE id = ?")->execute([$id]);
     header("Location: categories.php");
     exit;
 }
 
-$cats = $pdo->query("SELECT * FROM kategori ORDER BY id DESC")->fetchAll();
+$cats = $pdo->query("SELECT * FROM kategori_pengaduan ORDER BY id DESC")->fetchAll();
 ?>
 <!doctype html>
 <html>

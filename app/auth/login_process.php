@@ -3,12 +3,12 @@ session_start();
 require __DIR__ . "/../config/database.php";
 
 // ambil input
-$username = $_POST['username'];
+$email = $_POST['email'];
 $password = $_POST['password'];
 
 // cek user
-$stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-$stmt->execute([$username]);
+$stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+$stmt->execute([$email]);
 $user = $stmt->fetch();
 
 if ($user && password_verify($password, $user['password'])) {

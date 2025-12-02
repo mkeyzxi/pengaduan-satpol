@@ -5,8 +5,6 @@ require "../../app/config/database.php";
 require "../../app/helpers/sanitize.php";
 
 only_role(['masyarakat']);
-
-$kategori = $pdo->query("SELECT * FROM kategori_pengaduan")->fetchAll();
 ?>
 
 <html>
@@ -22,18 +20,12 @@ $kategori = $pdo->query("SELECT * FROM kategori_pengaduan")->fetchAll();
 
 <form action="../../app/controllers/pengaduanController.php" method="POST" enctype="multipart/form-data">
 
-<label>Kategori</label>
-<select name="kategori" class="form-control mb-2">
-<?php foreach($kategori as $k){ ?>
-<option value="<?=$k['id']?>"><?=$k['nama']?></option>
-<?php } ?>
-</select>
+<input name="lokasi" placeholder="Lokasi kejadian" class="form-control mb-2" required>
 
-<input name="lokasi" placeholder="Lokasi kejadian" class="form-control mb-2">
+<textarea name="deskripsi" class="form-control mb-2" rows="4" placeholder="Deskripsikan kejadian" required></textarea>
 
-<textarea name="deskripsi" class="form-control mb-2" rows="4" placeholder="Deskripsikan kejadian"></textarea>
-
-<input type="file" name="foto" class="form-control mb-2">
+<label class="mb-1">Foto (opsional)</label>
+<input type="file" name="foto" class="form-control mb-3">
 
 <button class="btn btn-primary w-100">Kirim Laporan</button>
 </form>

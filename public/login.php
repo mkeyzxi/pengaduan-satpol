@@ -9,12 +9,12 @@
 <h2>Login</h2>
 
 <?php if(isset($_GET['error'])): ?>
-<p style="color:red;">⚠ Username atau password salah!</p>
+<p style="color:red;">⚠ email atau password salah!</p>
 <?php endif; ?>
 
 <form action="../app/auth/login_process.php" method="POST">
-    <label>Username</label><br>
-    <input type="text" name="username" required><br><br>
+    <label>Email</label><br>
+    <input type="email" name="email" required><br><br>
 
     <label>Password</label><br>
     <input type="password" name="password" required><br><br>

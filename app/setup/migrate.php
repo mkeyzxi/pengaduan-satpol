@@ -7,9 +7,10 @@ try {
         CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY,
             nama VARCHAR(100),
-            username VARCHAR(60) UNIQUE,
+            email VARCHAR(120) UNIQUE,
             password VARCHAR(255),
-            role ENUM('admin','petugas','masyarakat')
+            role ENUM('admin','petugas','masyarakat'),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
 
         CREATE TABLE IF NOT EXISTS kategori_pengaduan(
@@ -36,7 +37,6 @@ try {
     ");
 
     echo "✔ Database tables created successfully.\n";
-
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage();
 }
