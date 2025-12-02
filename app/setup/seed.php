@@ -2,13 +2,13 @@
 require __DIR__ . "/../config/database.php";
 
 $users = [
-    ['Admin', 'admin', '123456', 'admin'],
-    ['Petugas', 'petugas', '123456', 'petugas'],
-    ['Masyarakat', 'masyarakat', '123456', 'masyarakat'],
+    ['Admin Satpol',  'admin@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'admin'],
+    ['Petugas Lapangan',  'petugas@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'petugas'],
+    ['Warga Contoh',  'user@test.com', password_hash('123456', PASSWORD_DEFAULT), 'masyarakat'],
 ];
 
 foreach ($users as $u) {
-    $pdo->prepare("INSERT IGNORE INTO users(nama,username,password,role) 
+    $pdo->prepare("INSERT IGNORE INTO users(nama,email,password,role) 
                    VALUES (?,?,?,?)")
         ->execute([$u[0], $u[1], password_hash($u[2], PASSWORD_BCRYPT), $u[3]]);
 }

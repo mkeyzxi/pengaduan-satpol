@@ -1,37 +1,63 @@
 <?php
-// app/controllers/pengaduanController.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
-require __DIR__ . '/../config/database.php';
-require __DIR__ . '/../helpers/upload.php';
-require __DIR__ . '/../helpers/sanitize.php';
-require __DIR__ . '/../ml/predict.php';
+require "../config/database.php";
+require "../helpers/sanitize.php";
+require "../core/middleware.php";
+require "../ml/predict.php";
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: /public/masyarakat/buat_pengaduan.php");
-    exit;
-}
+only_role(['masyarakat']);
 
-if (!isset($_SESSION['user'])) {
-    header("Location: /public/login.php");
-    exit;
-}
-
-$desc = clean($_POST['deskripsi'] ?? '');
+// -----------------------
+// DATA INPUT
+// -----------------------
 $user_id = $_SESSION['user']['id'];
-$kategori = intval($_POST['kategori'] ?? 0);
-$lokasi = clean($_POST['lokasi'] ?? '');
+$lokasi = clean($_POST['lokasi']);
+$deskripsi = clean($_POST['deskripsi']);
+$foto = null;
 
-$fotoName = null;
-if (!empty($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $fotoName = uploadFile($_FILES['foto'], __DIR__ . '/../../public/uploads/');
+// -----------------------
+// UPLOAD FOTO (Opsional)
+// -----------------------
+if (!empty($_FILES['foto']['name'])) {
+    $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png', 'mp4'];
+
+    if (in_array($ext, $allowed)) {
+        $filename = "foto_" . time() . "." . $ext;
+        $uploadPath = "../../public/uploads/" . $filename;
+
+        if (!is_dir("../../public/uploads")) {
+            mkdir("../../public/uploads", 0777, true);
+        }
+
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadPath)) {
+            $foto = $filename;
+        }
+    }
 }
 
-// Prediksi label via ML helper
-$prediksi = predict_text_label($desc);
+// -----------------------
+// PREDIKSI ML
+// -----------------------
+$prediksi = predict_text_label($deskripsi);
 
-// simpan
-$stmt = $pdo->prepare("INSERT INTO pengaduan(user_id, kategori_id, deskripsi, lokasi, foto, prediksi_label, status) VALUES (?, ?, ?, ?, ?, ?, 'diajukan')");
-$stmt->execute([$user_id, $kategori, $desc, $lokasi, $fotoName, $prediksi]);
+if (!$prediksi || $prediksi === "") {
+    $prediksi = "unknown";
+}
 
-header("Location: /public/masyarakat/dashboard.php");
+// -----------------------
+// INSERT DATABASE
+// -----------------------
+$stmt = $pdo->prepare("
+    INSERT INTO pengaduan (user_id, kategori_id, deskripsi, lokasi, foto, prediksi_label, status, created_at)
+    VALUES (?, NULL, ?, ?, ?, ?, 'diajukan', NOW())
+");
+
+$stmt->execute([$user_id, $deskripsi, $lokasi, $foto, $prediksi]);
+
+header("Location: ../../public/masyarakat/dashboard.php?success=1");
 exit;
+?>
