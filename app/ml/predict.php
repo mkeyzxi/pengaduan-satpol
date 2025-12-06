@@ -10,7 +10,7 @@ function predict_text_label($text)
     $tfidfPath = __DIR__ . "/tfidf.dat";
 
     if (!file_exists($modelPath) || !file_exists($vecPath) || !file_exists($tfidfPath)) {
-        return "unknown";
+        return "tidak diketahui";
     }
 
     $classifier = unserialize(file_get_contents($modelPath));
@@ -24,5 +24,5 @@ function predict_text_label($text)
 
     $result = $classifier->predict($sample);
 
-    return $result[0] ?? "unknown";
+    return $result[0] ?? "tidak diketahui";
 }
