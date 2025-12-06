@@ -1,19 +1,19 @@
 <?php
 require __DIR__ . "/../config/database.php";
 
-$users = [
-    ['Admin Satpol',  'admin@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'admin'],
-    ['Petugas Lapangan',  'petugas@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'petugas'],
-    ['Warga Contoh',  'user@test.com', password_hash('123456', PASSWORD_DEFAULT), 'masyarakat'],
-];
+// $users = [
+//     ['Admin Satpol',  'admin@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'admin'],
+//     ['Petugas Lapangan',  'petugas@satpolpp.go.id', password_hash('123456', PASSWORD_DEFAULT), 'petugas'],
+//     ['Warga Contoh',  'user@test.com', password_hash('123456', PASSWORD_DEFAULT), 'masyarakat'],
+// ];
 
-foreach ($users as $u) {
-    $pdo->prepare("INSERT IGNORE INTO users(nama,email,password,role) 
-                   VALUES (?,?,?,?)")
-        ->execute([$u[0], $u[1], password_hash($u[2], PASSWORD_BCRYPT), $u[3]]);
-}
+// foreach ($users as $u) {
+//     $pdo->prepare("INSERT IGNORE INTO users(nama,email,password,role) 
+//                    VALUES (?,?,?,?)")
+//         ->execute([$u[0], $u[1], password_hash($u[2], PASSWORD_BCRYPT), $u[3]]);
+// }
 
-echo "✔ Default users inserted.\n";
+// echo "✔ Default users inserted.\n";
 
 // Dummy training dataset
 $data = [
@@ -73,7 +73,7 @@ $data = [
 ];
 
 foreach ($data as $row) {
-    $pdo->prepare("INSERT INTO training_data(text_data, kategori_label) VALUES(?,?)")
+    $pdo->prepare("INSERT INTO training_data(text_data, label) VALUES(?,?)")
         ->execute($row);
 }
 

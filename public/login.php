@@ -18,8 +18,9 @@
 
     <label>Password</label><br>
     <input type="password" name="password" required><br><br>
-
+    
     <button type="submit">Login</button>
+    <a href="register.php">Belum punya akun?</a>
 </form>
 
 </body>

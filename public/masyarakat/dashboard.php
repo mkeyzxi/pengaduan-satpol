@@ -5,11 +5,9 @@ require __DIR__ . '/../../app/config/database.php';
 only_role(['masyarakat']);
 
 $uid = $_SESSION['user']['id'];
-$rows = $pdo->prepare("SELECT p.*, k.nama as kategori_nama FROM pengaduan p LEFT JOIN kategori_pengaduan k ON p.kategori_id=k.id WHERE p.user_id=? ORDER BY p.created_at DESC");
+$rows = $pdo->prepare("SELECT * FROM pengaduan WHERE user_id=? ORDER BY created_at DESC");
 $rows->execute([$uid]);
 $reports = $rows->fetchAll();
-
-
 ?>
 
 <?php if(isset($_GET['success'])): ?>
@@ -26,7 +24,7 @@ $reports = $rows->fetchAll();
 <a class="btn btn-primary mb-3" href="buat_pengaduan.php">Buat Pengaduan Baru</a>
 
 <table class="table table-striped">
-<thead><tr><th>ID</th><th>Pesan Pengaduan</th><th>Label</th><th>Status</th><th>Waktu</th></tr></thead>
+<thead><tr><th>ID</th><th>Pesan Pengaduan</th><th>Prediksi AI</th><th>Status</th><th>Waktu</th></tr></thead>
 <tbody>
 <?php foreach($reports as $r): ?>
 <tr>

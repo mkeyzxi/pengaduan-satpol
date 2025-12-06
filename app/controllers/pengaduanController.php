@@ -7,8 +7,15 @@ require "../config/database.php";
 require "../helpers/sanitize.php";
 require "../core/middleware.php";
 require "../ml/predict.php";
-
+require __DIR__ . '/../../vendor/autoload.php';
 only_role(['masyarakat']);
+
+// -----------------------
+// FIX: Suppress deprecated warning from Sastrawi
+// -----------------------
+if (PHP_VERSION_ID >= 80000) {
+    error_reporting(E_ALL & ~E_DEPRECATED);
+}
 
 // -----------------------
 // DATA INPUT
@@ -26,6 +33,7 @@ if (!empty($_FILES['foto']['name'])) {
     $allowed = ['jpg', 'jpeg', 'png', 'mp4'];
 
     if (in_array($ext, $allowed)) {
+
         $filename = "foto_" . time() . "." . $ext;
         $uploadPath = "../../public/uploads/" . $filename;
 
@@ -44,20 +52,24 @@ if (!empty($_FILES['foto']['name'])) {
 // -----------------------
 $prediksi = predict_text_label($deskripsi);
 
-if (!$prediksi || $prediksi === "") {
+if (!$prediksi || trim($prediksi) === "") {
     $prediksi = "unknown";
 }
 
 // -----------------------
 // INSERT DATABASE
+// (Kategori dihapus sesuai desain final)
 // -----------------------
 $stmt = $pdo->prepare("
-    INSERT INTO pengaduan (user_id, kategori_id, deskripsi, lokasi, foto, prediksi_label, status, created_at)
-    VALUES (?, NULL, ?, ?, ?, ?, 'diajukan', NOW())
+    INSERT INTO pengaduan (user_id, deskripsi, lokasi, foto, prediksi_label, status, created_at)
+    VALUES (?, ?, ?, ?, ?, 'diajukan', NOW())
 ");
 
 $stmt->execute([$user_id, $deskripsi, $lokasi, $foto, $prediksi]);
 
+// -----------------------
+// REDIRECT
+// -----------------------
 header("Location: ../../public/masyarakat/dashboard.php?success=1");
 exit;
 ?>

@@ -1,3 +1,5 @@
+<!-- C:\xampp\htdocs\pengaduan\public\admin\users.php -->
+
 <?php
 session_start();
 require __DIR__ . '/../../app/core/middleware.php';
@@ -37,6 +39,12 @@ if (isset($_GET['del'])) {
   header("Location: users.php");
   exit;
 }
+// if (isset($_GET['put'])) { =================================== perbarua untuk detail dan edit
+//   $id = intval($_GET['del']);
+//   $pdo->prepare("DELETE FROM users WHERE id=?")->execute([$id]);
+//   header("Location: users.php");
+//   exit;
+// }
 
 $users = $pdo->query("SELECT * FROM users ORDER BY id DESC")->fetchAll();
 ?>
@@ -69,8 +77,9 @@ $users = $pdo->query("SELECT * FROM users ORDER BY id DESC")->fetchAll();
           <td><?= htmlspecialchars($u['email']) ?></td>
           <td><?= $u['role'] ?></td>
           <td>
+            <a class="btn btn-sm btn-danger" href="?put=<?= $u['id'] ?>">Edit</a>
             <a class="btn btn-sm btn-danger" href="?del=<?= $u['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a>
-          </td>
+            </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
