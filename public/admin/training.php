@@ -70,6 +70,28 @@ $data = $pdo->query("SELECT * FROM training_data ORDER BY id DESC")->fetchAll();
 
 <body class="p-3">
     <a class="btn btn-secondary mb-2" href="dashboard.php">← Kembali</a>
+    <h5>Tambah Data Latih</h5>
+    <form method="post">
+        <input type="hidden" name="action" value="add">
+        <textarea name="text" class="form-control mb-2" rows="3" required></textarea>
+        <input class="form-control mb-2" name="label" placeholder="Label hasil koreksi" required>
+        <button class="btn btn-primary">Tambah</button>
+    </form>
+
+    <hr>
+    <form method="post">
+        <input type="hidden" name="action" value="retrain">
+        <button class="btn btn-success">Latih Ulang Model (Retrain)</button>
+    </form>
+    <hr>
+
+    <h5>Import Excel (.xlsx)</h5>
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="import_excel">
+        <input type="file" name="excel_file" accept=".xlsx" class="form-control mb-2" required>
+        <button class="btn btn-info">Upload Excel</button>
+    </form>
+    <hr>
     <h4>Data Latih</h4>
 
     <table class="table">
@@ -95,28 +117,7 @@ $data = $pdo->query("SELECT * FROM training_data ORDER BY id DESC")->fetchAll();
         </tbody>
     </table>
 
-    <hr>
-    <h5>Tambah Data Latih</h5>
-    <form method="post">
-        <input type="hidden" name="action" value="add">
-        <textarea name="text" class="form-control mb-2" rows="3" required></textarea>
-        <input class="form-control mb-2" name="label" placeholder="Label hasil koreksi" required>
-        <button class="btn btn-primary">Tambah</button>
-    </form>
-
-    <hr>
-    <form method="post">
-        <input type="hidden" name="action" value="retrain">
-        <button class="btn btn-success">Latih Ulang Model (Retrain)</button>
-    </form>
-    <hr>
-
-    <h5>Import Excel (.xlsx)</h5>
-    <form method="post" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="import_excel">
-        <input type="file" name="excel_file" accept=".xlsx" class="form-control mb-2" required>
-        <button class="btn btn-info">Upload Excel</button>
-    </form>
+    
 
 </body>
 
