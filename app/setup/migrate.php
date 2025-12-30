@@ -18,7 +18,7 @@ try {
             deskripsi TEXT,
             lokasi VARCHAR(255),
             foto VARCHAR(200),
-            prediksi_label VARCHAR(100) DEFAULT 'unknown',
+            prediksi_label VARCHAR(100) DEFAULT 'tidak diketahui',
             status ENUM('diajukan','diproses','selesai','tidak sesuai','ditolak') DEFAULT 'diajukan',
             koreksi_petugas VARCHAR(100) NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -28,6 +28,19 @@ try {
             id INT AUTO_INCREMENT PRIMARY KEY,
             text_data TEXT,
             label VARCHAR(100)
+        );
+
+        
+        CREATE TABLE IF NOT EXISTS tindak_lanjut_pengaduan(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            pengaduan_id INT NOT NULL,
+            petugas_id INT NOT NULL,
+            catatan TEXT NOT NULL,
+            status_akhir ENUM('diproses','selesai','tidak sesuai','ditolak') DEFAULT 'diproses',
+            foto_bukti VARCHAR(255) NULL,
+            tanggal_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (pengaduan_id) REFERENCES pengaduan(id) ON DELETE CASCADE,
+            FOREIGN KEY (petugas_id) REFERENCES users(id)
         );
     ");
 
