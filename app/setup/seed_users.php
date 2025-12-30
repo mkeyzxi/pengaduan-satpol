@@ -12,7 +12,7 @@ foreach ($users as $u) {
     $stmt->execute([$u[1]]);
 
     if ($stmt->fetch()) {
-        echo "❌ User {$u[1]} sudah ada, skip.\n";
+        echo "User {$u[1]} sudah ada, skip.\n";
         continue;
     }
 

@@ -37,8 +37,20 @@ $title = "Register - Sistem Pengaduan";
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="Daftar Akun Sistem Pengaduan Masyarakat Satpol PP">
+
+	<!-- PWA Meta Tags -->
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#4a5d23">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="apple-mobile-web-app-title" content="Pengaduan Satpol PP">
+	<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
 	<title><?= $title ?></title>
 	<link rel="stylesheet" href="style/style.css">
+
+	<!-- PWA Service Worker Registration -->
+	<script src="js/pwa-register.js" defer></script>
 </head>
 
 <body class="min-h-screen flex flex-col bg-gradient-to-br from-primary-100 via-primary-50 to-primary-100">
