@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@theme {
+  /* Primary Khaki-Green Colors */
+  --color-primary-50: #f4f5f0;
+  --color-primary-100: #e6e9dc;
+  --color-primary-200: #ced4bb;
+  --color-primary-300: #aeb892;
+  --color-primary-400: #8b9362;
+  --color-primary-500: #7a8b4f;
+  --color-primary-600: #5d6d3d;
+  --color-primary-700: #4a5a2f;
+  --color-primary-800: #3d4928;
+  --color-primary-900: #343f24;
+  --color-primary-950: #1a2110;
+  
+  /* Accent Colors */
+  --color-accent-light: #a4b06b;
+  --color-accent: #8b9362;
+  --color-accent-dark: #6b7348;
+}
