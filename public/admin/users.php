@@ -56,7 +56,6 @@ require __DIR__ . '/../layouts/navbar.php';
       </div>
 
     </div>
-
     <!-- Alerts -->
     <?php if (isset($_GET['success'])): ?>
       <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
@@ -76,8 +75,61 @@ require __DIR__ . '/../layouts/navbar.php';
       </div>
     <?php endif; ?>
 
+   <!-- Add User Form -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden ">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-800">Tambah User Baru</h2>
+      </div>
+      <div class="p-6">
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="hidden" name="action" value="add">
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+            <input type="text" name="nama" required
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              placeholder="masukkan nama lengkap">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" name="email" required
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              placeholder="masukkan email">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input type="password" name="password" required
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              placeholder="masukkan password">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+            <select name="role" required
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+              <option value="masyarakat">Masyarakat</option>
+              <option value="petugas">Petugas</option>
+              <!-- <option value="admin">Admin</option> -->
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <button type="submit"
+              class="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Tambah User
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
     <!-- Users Table -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mt-8">
       <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
         <h2 class="text-lg font-semibold text-gray-800">Daftar Users</h2>
       </div>
@@ -112,7 +164,8 @@ require __DIR__ . '/../layouts/navbar.php';
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  <a href="?del=<?= $u['id'] ?>"
+                  <?php if ($u['role'] !== 'admin'): ?>
+                    <a href="?del=<?= $u['id'] ?>"
                     onclick="return confirm('Hapus user ini?')"
                     class="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,6 +173,8 @@ require __DIR__ . '/../layouts/navbar.php';
                     </svg>
                     Hapus
                   </a>
+                  
+                  <?php endif; ?>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -128,58 +183,7 @@ require __DIR__ . '/../layouts/navbar.php';
       </div>
     </div>
 
-    <!-- Add User Form -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <h2 class="text-lg font-semibold text-gray-800">Tambah User Baru</h2>
-      </div>
-      <div class="p-6">
-        <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="hidden" name="action" value="add">
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
-            <input type="text" name="nama" required
-              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-              placeholder="Nama lengkap">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" name="email" required
-              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-              placeholder="email@example.com">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input type="password" name="password" required
-              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-              placeholder="••••••••">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-            <select name="role" required
-              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
-              <option value="masyarakat">Masyarakat</option>
-              <option value="petugas">Petugas</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <div class="md:col-span-2">
-            <button type="submit"
-              class="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Tambah User
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+   
 
   </div>
 </main>

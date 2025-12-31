@@ -66,7 +66,27 @@ require __DIR__ . '/../layouts/navbar.php';
         Download PDF
       </button>
     </div>
+    <!-- SUMMARY -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500">Total (30 Hari)</p>
+        <p class="text-3xl font-bold text-green-600"><?= array_sum($counts) ?></p>
+      </div>
 
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500">Rata-rata / Hari</p>
+        <p class="text-3xl font-bold text-blue-600">
+          <?= count($counts) ? round(array_sum($counts) / count($counts), 1) : 0 ?>
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500 ">Hari Tertinggi</p>
+        <p class="text-3xl font-bold text-yellow-600">
+          <?= count($counts) ? max($counts) : 0 ?>
+        </p>
+      </div>
+    </div>
     <!-- AREA YANG DIEKSPOR KE PDF -->
     <div id="reportArea" class="bg-white rounded-xl shadow-md overflow-hidden">
 
@@ -90,27 +110,7 @@ require __DIR__ . '/../layouts/navbar.php';
 
     </div>
 
-    <!-- SUMMARY -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
-      <div class="bg-white rounded-xl shadow-md p-6 text-center">
-        <p class="text-sm text-gray-500">Total (30 Hari)</p>
-        <p class="text-3xl font-bold text-green-600"><?= array_sum($counts) ?></p>
-      </div>
 
-      <div class="bg-white rounded-xl shadow-md p-6 text-center">
-        <p class="text-sm text-gray-500">Rata-rata / Hari</p>
-        <p class="text-3xl font-bold text-blue-600">
-          <?= count($counts) ? round(array_sum($counts) / count($counts), 1) : 0 ?>
-        </p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-md p-6 text-center">
-        <p class="text-sm text-gray-500 ">Hari Tertinggi</p>
-        <p class="text-3xl font-bold text-yellow-600">
-          <?= count($counts) ? max($counts) : 0 ?>
-        </p>
-      </div>
-    </div>
 
   </div>
 </main>

@@ -44,7 +44,7 @@ try {
         );
     ");
 
-    echo "✔ Database updated successfully.\n";
+    echo "Database updated successfully.\n";
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage();
+    echo "Error: " . $e->getMessage();
 }
