@@ -1,13 +1,16 @@
-<!-- C:\xampp\htdocs\pengaduan\public\admin\report.php -->
 <?php
 session_start();
 require __DIR__ . '/../../app/core/middleware.php';
 require __DIR__ . '/../../app/config/database.php';
 only_role(['admin']);
 
-// ambil 30 hari terakhir count per hari
+$title = "Laporan Pengaduan";
+
+/* =============================
+   AMBIL DATA 30 HARI TERAKHIR
+============================= */
 $stmt = $pdo->prepare("
-    SELECT DATE(created_at) as tgl, COUNT(*) as cnt
+    SELECT DATE(created_at) AS tgl, COUNT(*) AS cnt
     FROM pengaduan
     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     GROUP BY DATE(created_at)
@@ -19,68 +22,170 @@ $data = $stmt->fetchAll();
 $labels = [];
 $counts = [];
 foreach ($data as $d) {
-    $labels[] = $d['tgl'];
-    $counts[] = intval($d['cnt']);
+  $labels[] = $d['tgl'];
+  $counts[] = (int)$d['cnt'];
 }
+
+require __DIR__ . '/../layouts/header.php';
+require __DIR__ . '/../layouts/navbar.php';
 ?>
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Laporan - Grafik Trend Pengaduan</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body class="p-3">
-  <a class="btn btn-secondary mb-3" href="dashboard.php">← Kembali</a>
-  <h4>Grafik Trend Pengaduan (30 hari terakhir)</h4>
-  <div id="reportArea" style="background:#fff;padding:10px;border-radius:6px;">
-    <canvas id="trendChart" width="900" height="350"></canvas>
+
+<!-- LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  /* =============================
+   SAFE MODE UNTUK PDF
+============================= */
+  .pdf-export,
+  .pdf-export * {
+    color: #000 !important;
+    background-color: #fff !important;
+    border-color: #ddd !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+</style>
+
+<main class="flex-1">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Laporan Pengaduan</h1>
+        <p class="text-gray-600 mt-1">Grafik trend pengaduan 30 hari terakhir</p>
+      </div>
+
+      <button
+        id="downloadPdf"
+        class="mt-4 sm:mt-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
+        Download PDF
+      </button>
+    </div>
+
+    <!-- AREA YANG DIEKSPOR KE PDF -->
+    <div id="reportArea" class="bg-white rounded-xl shadow-md overflow-hidden">
+
+      <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-800">
+          Trend Pengaduan (30 Hari Terakhir)
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <?php if (empty($data)): ?>
+          <div class="text-center py-12 text-gray-500">
+            <p>Belum ada data pengaduan</p>
+          </div>
+        <?php else: ?>
+          <div style="height:400px">
+            <canvas id="trendChart"></canvas>
+          </div>
+        <?php endif; ?>
+      </div>
+
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500">Total (30 Hari)</p>
+        <p class="text-3xl font-bold text-green-600"><?= array_sum($counts) ?></p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500">Rata-rata / Hari</p>
+        <p class="text-3xl font-bold text-blue-600">
+          <?= count($counts) ? round(array_sum($counts) / count($counts), 1) : 0 ?>
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <p class="text-sm text-gray-500 ">Hari Tertinggi</p>
+        <p class="text-3xl font-bold text-yellow-600">
+          <?= count($counts) ? max($counts) : 0 ?>
+        </p>
+      </div>
+    </div>
+
   </div>
-  <div class="mt-3">
-    <button id="downloadPdf" class="btn btn-primary">Download PDF</button>
-  </div>
+</main>
 
 <script>
-const labels = <?= json_encode($labels) ?>;
-const dataVals = <?= json_encode($counts) ?>;
+  const labels = <?= json_encode($labels) ?>;
+  const values = <?= json_encode($counts) ?>;
 
-const ctx = document.getElementById('trendChart').getContext('2d');
-const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
+  <?php if (!empty($data)): ?>
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
         labels: labels,
         datasets: [{
-            label: 'Jumlah Pengaduan',
-            data: dataVals,
-            fill: false,
-            tension: 0.2,
-            borderColor: 'rgb(75, 192, 192)'
+          label: 'Jumlah Pengaduan',
+          data: values,
+          borderColor: '#556B2F',
+          backgroundColor: 'rgba(85,107,47,0.15)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 3,
+          pointRadius: 4
         }]
-    },
-    options: {
+      },
+      options: {
         responsive: true,
-        plugins: { legend: { display: true } }
-    }
-});
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  <?php endif; ?>
 
-document.getElementById('downloadPdf').addEventListener('click', async function(){
+  /* =============================
+     EXPORT PDF (FIXED)
+  ============================= */
+  document.getElementById('downloadPdf').onclick = async () => {
     const area = document.getElementById('reportArea');
-    const canvas = await html2canvas(area, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
+
+    // FORCE DESKTOP WIDTH
+    area.classList.add('pdf-export');
+    area.style.width = '1024px';
+
+    const canvas = await html2canvas(area, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true
+    });
+
+    const img = canvas.toDataURL('image/png');
+    const {
+      jsPDF
+    } = window.jspdf;
     const pdf = new jsPDF('landscape', 'pt', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    // calculate width/height to fit
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgWidth = pageWidth - 40;
-    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 20, 30, imgWidth, imgHeight);
+
+    const pageW = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(img);
+    const imgW = pageW - 80;
+    const imgH = (imgProps.height * imgW) / imgProps.width;
+
+    pdf.setFontSize(18);
+    pdf.text('Laporan Pengaduan - Satpol PP', 40, 40);
+    pdf.setFontSize(11);
+    pdf.text('Generated: ' + new Date().toLocaleDateString('id-ID'), 40, 60);
+
+    pdf.addImage(img, 'PNG', 40, 80, imgW, imgH);
     pdf.save('laporan_pengaduan.pdf');
-});
+
+    // RESET
+    area.classList.remove('pdf-export');
+    area.style.width = '';
+  };
 </script>
-</body>
-</html>
+
+<?php require __DIR__ . '/../layouts/footer.php'; ?>
