@@ -1,4 +1,4 @@
 <?php
 // Mengalihkan langsung tanpa jeda
-header("Location: public/");
+header("Location: public/login.php");
 exit();
