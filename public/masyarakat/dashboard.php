@@ -8,8 +8,30 @@ only_role(['masyarakat']);
 $title = "Dashboard Masyarakat";
 
 $uid = $_SESSION['user']['id'];
-$stmt = $pdo->prepare("SELECT * FROM pengaduan WHERE user_id=? ORDER BY created_at DESC");
-$stmt->execute([$uid]);
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$perPage = 10;
+$offset = ($page - 1) * $perPage;
+
+// Build query with search
+$baseQuery = "FROM pengaduan WHERE user_id = ?";
+$params = [$uid];
+
+if ($search !== '') {
+  $baseQuery .= " AND deskripsi LIKE ?";
+  $params[] = "%{$search}%";
+}
+
+// Get total count
+$countStmt = $pdo->prepare("SELECT COUNT(*) " . $baseQuery);
+$countStmt->execute($params);
+$totalItems = $countStmt->fetchColumn();
+$totalPages = ceil($totalItems / $perPage);
+
+// Get paginated data
+$dataQuery = "SELECT * " . $baseQuery . " ORDER BY created_at DESC LIMIT " . intval($perPage) . " OFFSET " . intval($offset);
+$stmt = $pdo->prepare($dataQuery);
+$stmt->execute($params);
 $reports = $stmt->fetchAll();
 
 require __DIR__ . '/../layouts/header.php';
@@ -42,6 +64,32 @@ require __DIR__ . '/../layouts/navbar.php';
         </svg>
         Buat Pengaduan
       </a>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6 ">
+      <form method="GET" class="flex gap-2">
+        <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
+          placeholder="Cari deskripsi pengaduan..."
+          class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Cari
+        </button>
+        <?php if ($search): ?>
+          <a href="dashboard.php" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="6" y1="6" x2="18" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+              <line x1="18" y1="6" x2="6" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+            </svg></a>
+        <?php endif; ?>
+      </form>
+    </div>
+
+    <!-- Results Count -->
+    <div class="mb-4 text-sm text-gray-600">
+      Menampilkan <?= count($reports) ?> dari <?= $totalItems ?> pengaduan
     </div>
 
     <!-- Reports Table -->
@@ -114,6 +162,48 @@ require __DIR__ . '/../layouts/navbar.php';
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      <?php if ($totalPages > 1): ?>
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-gray-600">
+              Halaman <?= $page ?> dari <?= $totalPages ?>
+            </p>
+            <div class="flex gap-2">
+              <?php
+              $queryParams = [];
+              if ($search) $queryParams['search'] = $search;
+              ?>
+
+              <?php if ($page > 1): ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $page - 1])) ?>"
+                  class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors">
+                  &laquo; Prev
+                </a>
+              <?php endif; ?>
+
+              <?php
+              $startPage = max(1, $page - 2);
+              $endPage = min($totalPages, $page + 2);
+              for ($i = $startPage; $i <= $endPage; $i++):
+              ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $i])) ?>"
+                  class="px-4 py-2 <?= $i == $page ? 'bg-primary-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700' ?> rounded-lg text-sm transition-colors">
+                  <?= $i ?>
+                </a>
+              <?php endfor; ?>
+
+              <?php if ($page < $totalPages): ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $page + 1])) ?>"
+                  class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors">
+                  Next &raquo;
+                </a>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
 
   </div>

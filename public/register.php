@@ -63,14 +63,14 @@ $title = "Register - Sistem Pengaduan";
 			<!-- Register Card -->
 			<div class="bg-white rounded-2xl shadow-xl overflow-hidden">
 				<!-- Card Header -->
-				<div class="bg-primary-600 px-6 py-8 text-center">
+				<div class=" px-6 py-8 text-center">
 
-					<h2 class="text-2xl font-bold text-white">Buat Akun Baru</h2>
-					<p class="text-primary-200 mt-2">Daftar untuk mulai melaporkan pengaduan</p>
+					<h2 class="text-2xl font-bold text-primary-600">Buat Akun Baru</h2>
+					<p class="text-gray-600 mt-2">Daftar untuk mulai melaporkan pengaduan</p>
 				</div>
 
 				<!-- Card Body -->
-				<div class="px-6 py-8">
+				<div class="px-6 py-5">
 					<?php if (isset($_GET['error']) && $_GET['error'] === 'email_exists'): ?>
 						<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
 							<svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -91,7 +91,7 @@ $title = "Register - Sistem Pengaduan";
 								</span>
 								<input type="text" id="nama" name="nama" required
 									class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-									placeholder="Nama lengkap Anda">
+									placeholder="masukkan nama lengkap">
 							</div>
 						</div>
 
@@ -105,7 +105,7 @@ $title = "Register - Sistem Pengaduan";
 								</span>
 								<input type="email" id="email" name="email" required
 									class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-									placeholder="nama@email.com">
+									placeholder="masukkan email">
 							</div>
 						</div>
 
@@ -119,7 +119,7 @@ $title = "Register - Sistem Pengaduan";
 								</span>
 								<input type="password" id="password" name="password" required minlength="6"
 									class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-									placeholder="Minimal 6 karakter">
+									placeholder="masukkan password">
 							</div>
 						</div>
 

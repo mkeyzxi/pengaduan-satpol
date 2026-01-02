@@ -44,14 +44,14 @@ if (isset($_SESSION['user'])) {
             <!-- Login Card -->
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                 <!-- Card Header -->
-                <div class="bg-primary-600 px-6 py-8 text-center">
+                <div class=" px-6 py-8 text-center">
 
-                    <h2 class="text-2xl font-bold text-white">Selamat Datang</h2>
-                    <p class="text-primary-200 mt-2">Silakan masuk ke akun Anda</p>
+                    <h2 class="text-2xl font-bold text-primary-600">Selamat Datang</h2>
+                    <p class="text-gray-600 mt-2">Silakan masuk ke akun Anda</p>
                 </div>
 
                 <!-- Card Body -->
-                <div class="px-6 py-8">
+                <div class="px-6 py-5">
                     <?php if (isset($_GET['error'])): ?>
                         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
                             <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -72,7 +72,7 @@ if (isset($_SESSION['user'])) {
                                 </span>
                                 <input type="email" id="email" name="email" required
                                     class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                                    placeholder="nama@email.com">
+                                    placeholder="masukkan email">
                             </div>
                         </div>
 
@@ -86,16 +86,14 @@ if (isset($_SESSION['user'])) {
                                 </span>
                                 <input type="password" id="password" name="password" required
                                     class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                                    placeholder="••••••••">
+                                    placeholder="masukkan password">
                             </div>
                         </div>
 
                         <button type="submit"
                             class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
                             <span>Masuk</span>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
+                            
                         </button>
                     </form>
                 </div>

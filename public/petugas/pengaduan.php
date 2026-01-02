@@ -8,27 +8,43 @@ $title = "Daftar Pengaduan";
 
 $filter_status = $_GET['status'] ?? '';
 $filter_label  = $_GET['label'] ?? '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$perPage = 10;
+$offset = ($page - 1) * $perPage;
 
-$q = "SELECT p.*, u.nama AS nama_user 
-      FROM pengaduan p
+$baseQuery = "FROM pengaduan p
       LEFT JOIN users u ON p.user_id = u.id
       WHERE 1=1";
 
 $params = [];
 
 if ($filter_status) {
-  $q .= " AND p.status = ?";
+  $baseQuery .= " AND p.status = ?";
   $params[] = $filter_status;
 }
 
 if ($filter_label) {
-  $q .= " AND p.prediksi_label = ?";
+  $baseQuery .= " AND p.prediksi_label = ?";
   $params[] = $filter_label;
 }
 
-$q .= " ORDER BY p.created_at DESC";
+if ($search !== '') {
+  $baseQuery .= " AND (p.deskripsi LIKE ? OR u.nama LIKE ?)";
+  $searchParam = "%{$search}%";
+  $params[] = $searchParam;
+  $params[] = $searchParam;
+}
 
-$stmt = $pdo->prepare($q);
+// Get total count
+$countStmt = $pdo->prepare("SELECT COUNT(*) " . $baseQuery);
+$countStmt->execute($params);
+$totalItems = $countStmt->fetchColumn();
+$totalPages = ceil($totalItems / $perPage);
+
+// Get paginated data - using intval to avoid PDO string binding issue
+$dataQuery = "SELECT p.*, u.nama AS nama_user " . $baseQuery . " ORDER BY p.created_at DESC LIMIT " . intval($perPage) . " OFFSET " . intval($offset);
+$stmt = $pdo->prepare($dataQuery);
 $stmt->execute($params);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -59,6 +75,13 @@ require __DIR__ . '/../layouts/navbar.php';
     <div class="bg-white rounded-xl shadow-md p-6 mb-6">
       <form method="GET" class="flex flex-col sm:flex-row gap-4">
         <div class="flex-1">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Cari</label>
+          <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
+            placeholder="Cari deskripsi atau nama pelapor..."
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+        </div>
+
+        <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
             <option value="">-- Semua Status --</option>
@@ -80,23 +103,26 @@ require __DIR__ . '/../layouts/navbar.php';
           </select>
         </div>
 
-        <div class="flex items-end">
+        <div class="flex items-end gap-2">
           <button type="submit" class="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-2 rounded-lg transition-colors flex items-center justify-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            Filter
+            Cari
           </button>
+          <?php if ($filter_status || $filter_label || $search): ?>
+            <a href="pengaduan.php" class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="6" y1="6" x2="18" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <line x1="18" y1="6" x2="6" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+              </svg></a>
+          <?php endif; ?>
         </div>
       </form>
     </div>
 
     <!-- Results Count -->
     <div class="mb-4 text-sm text-gray-600">
-      Menampilkan <?= count($rows) ?> pengaduan
-      <?php if ($filter_status || $filter_label): ?>
-        <a href="pengaduan.php" class="text-primary-600 hover:underline ml-2">Reset filter</a>
-      <?php endif; ?>
+      Menampilkan <?= count($rows) ?> dari <?= $totalItems ?> pengaduan
     </div>
 
     <!-- Table -->
@@ -171,6 +197,50 @@ require __DIR__ . '/../layouts/navbar.php';
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      <?php if ($totalPages > 1): ?>
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-gray-600">
+              Halaman <?= $page ?> dari <?= $totalPages ?>
+            </p>
+            <div class="flex gap-2">
+              <?php
+              $queryParams = [];
+              if ($search) $queryParams['search'] = $search;
+              if ($filter_status) $queryParams['status'] = $filter_status;
+              if ($filter_label) $queryParams['label'] = $filter_label;
+              ?>
+
+              <?php if ($page > 1): ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $page - 1])) ?>"
+                  class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors">
+                  &laquo; Prev
+                </a>
+              <?php endif; ?>
+
+              <?php
+              $startPage = max(1, $page - 2);
+              $endPage = min($totalPages, $page + 2);
+              for ($i = $startPage; $i <= $endPage; $i++):
+              ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $i])) ?>"
+                  class="px-4 py-2 <?= $i == $page ? 'bg-primary-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700' ?> rounded-lg text-sm transition-colors">
+                  <?= $i ?>
+                </a>
+              <?php endfor; ?>
+
+              <?php if ($page < $totalPages): ?>
+                <a href="?<?= http_build_query(array_merge($queryParams, ['page' => $page + 1])) ?>"
+                  class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors">
+                  Next &raquo;
+                </a>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
 
   </div>
