@@ -76,7 +76,7 @@ require __DIR__ . '/../layouts/navbar.php';
       <div class="bg-white rounded-xl shadow-md p-6 text-center">
         <p class="text-sm text-gray-500">Rata-rata / Hari</p>
         <p class="text-3xl font-bold text-blue-600">
-          <?= count($counts) ? round(array_sum($counts) / count($counts), 1) : 0 ?>
+          <?= count($counts) ? round(round(array_sum($counts) / count($counts)), 1) : 0 ?>
         </p>
       </div>
 

@@ -67,7 +67,7 @@ require __DIR__ . '/../layouts/navbar.php';
     </div>
 
     <!-- Search Form -->
-    <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6 ">
       <form method="GET" class="flex gap-2">
         <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
           placeholder="Cari deskripsi pengaduan..."
@@ -79,7 +79,10 @@ require __DIR__ . '/../layouts/navbar.php';
           Cari
         </button>
         <?php if ($search): ?>
-          <a href="dashboard.php" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">Reset</a>
+          <a href="dashboard.php" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="6" y1="6" x2="18" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+              <line x1="18" y1="6" x2="6" y2="18" stroke="white" stroke-width="2" stroke-linecap="round" />
+            </svg></a>
         <?php endif; ?>
       </form>
     </div>
