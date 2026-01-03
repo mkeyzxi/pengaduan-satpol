@@ -125,7 +125,7 @@ require __DIR__ . '/../layouts/navbar.php';
 
       <!-- Add Training Data -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-primary-50">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-100">
           <h2 class="text-lg font-semibold text-gray-800 flex items-center">
 
             Tambah Data Latih
@@ -140,12 +140,37 @@ require __DIR__ . '/../layouts/navbar.php';
                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
                 placeholder="Masukkan contoh teks pengaduan..."></textarea>
             </div>
-            <div>
+            <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Label Klasifikasi</label>
               <input type="text" name="label" required
                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                 placeholder="Contoh: Orang Bolos">
-            </div>
+              <select name="label" required>
+                <option value="" disabled selected>Pilih Label</option>
+                <option value="Orang Bolos">Orang Bolos</option>
+                <option value="Penertiban Pasar">Penertiban Pasar</option>
+                <option value="Sapi Liar">Sapi Liar</option>
+
+              </select>
+            </div> -->
+
+            <div>
+  <label class="block text-sm font-medium text-gray-700 mb-2">Label Klasifikasi</label>
+  
+  <!-- Input Text
+  <input type="text" name="label_custom" required
+    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors mb-4"
+    placeholder="Contoh: Orang Bolos"> -->
+
+  <!-- Selectt -->
+  <select name="label" required
+    class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors appearance-none cursor-pointer">
+    <option value="" disabled selected>Pilih Label</option>
+    <option value="Orang Bolos">Orang Bolos</option>
+    <option value="Penertiban Pasar">Penertiban Pasar</option>
+    <option value="Sapi Liar">Sapi Liar</option>
+  </select>
+</div>
             <button type="submit"
               class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors">
               Tambah Data
@@ -156,7 +181,7 @@ require __DIR__ . '/../layouts/navbar.php';
 
       <!-- Import Excel -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-blue-50">
+        <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
           <h2 class="text-lg font-semibold text-gray-800 flex items-center">
             Import Excel
           </h2>
@@ -167,11 +192,11 @@ require __DIR__ . '/../layouts/navbar.php';
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">File Excel (.xlsx)</label>
               <input type="file" name="excel_file" accept=".xlsx" required
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
             </div>
             <p class="text-xs text-gray-500">Format: No | Text | Label</p>
             <button type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors">
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors">
               Upload Excel
             </button>
           </form>
@@ -180,17 +205,17 @@ require __DIR__ . '/../layouts/navbar.php';
 
       <!-- Retrain Model -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
+        <div class="px-6 py-4 border-b border-gray-200 bg-blue-50">
           <h2 class="text-lg font-semibold text-gray-800 flex items-center">
             Latih Ulang Model
           </h2>
         </div>
         <div class="p-6">
-          <p class="text-sm text-gray-600 mb-4">Setelah menambahkan data baru, latih ulang model AI untuk meningkatkan akurasi klasifikasi.</p>
+          <p class="text-sm text-gray-600 mb-4">Setelah menambahkan data baru, latih ulang model untuk meningkatkan akurasi klasifikasi.</p>
           <form method="POST">
             <input type="hidden" name="action" value="retrain">
             <button type="submit"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center">
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center">
               Retrain Model
             </button>
           </form>

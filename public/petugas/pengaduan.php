@@ -77,14 +77,14 @@ require __DIR__ . '/../layouts/navbar.php';
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Cari</label>
           <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
-            placeholder="Cari deskripsi atau nama pelapor..."
+            placeholder="Cari nama pelapor atau deskripsi..."
             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
         </div>
 
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <option value="">-- Semua Status --</option>
+            <option value="">Semua Status</option>
             <?php
             $status_list = ['diajukan', 'diproses', 'selesai', 'tidak sesuai', 'ditolak'];
             foreach ($status_list as $st): ?>
@@ -96,7 +96,7 @@ require __DIR__ . '/../layouts/navbar.php';
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Label Klasifikasi</label>
           <select name="label" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-            <option value="">-- Semua Label AI --</option>
+            <option value="">Semua Label</option>
             <?php foreach ($labels as $l): ?>
               <option value="<?= htmlspecialchars($l) ?>" <?= $filter_label == $l ? 'selected' : '' ?>><?= htmlspecialchars($l) ?></option>
             <?php endforeach; ?>
