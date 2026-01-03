@@ -15,19 +15,19 @@ require __DIR__ . '/../layouts/navbar.php';
   <div class="max-w-2xl mx-auto px-4 py-8">
 
     <!-- Back Link -->
-    <a href="dashboard.php" class="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium mb-6 group">
+    <a href="dashboard.php" class="inline-flex items-center  text-primary-600 hover:text-primary-700 font-medium mb-6 group">
       <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
       </svg>
       Kembali ke Dashboard
     </a>
     <!-- Info Card -->
-    <div class="bg-primary-50 border border-primary-200 rounded-xl p-4 mt-6">
+    <div class="bg-white border border-primary-200 rounded-xl p-4 mt-6 ">
       <div class="flex">
-        <svg class="w-5 h-5 text-primary-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-5 h-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
         </svg>
-        <div class="text-sm text-primary-700">
+        <div class="text-sm text-primary-700 ">
           <p class="font-medium mb-1">Informasi Penting</p>
           <ul class="list-disc list-inside space-y-1 text-primary-600">
             <li>Pengaduan akan diproses oleh petugas dalam 1-3 hari kerja</li>
@@ -39,7 +39,7 @@ require __DIR__ . '/../layouts/navbar.php';
     </div>
     <!-- Form Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden mt-8">
-      <div class="px-6 py-4 border-b border-gray-200 bg-primary-50">
+      <div class="px-6 py-4 border-b border-gray-200 bg-white">
         <h1 class="text-2xl font-bold text-gray-800 flex items-center">
 
           Buat Pengaduan Baru

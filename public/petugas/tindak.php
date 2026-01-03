@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt->execute([
     $id,
     $petugas_id,
-    $catatan !== '' ? $catatan : 'Konfirmasi / koreksi klasifikasi AI',
+    $catatan !== '' ? $catatan : 'Konfirmasi / koreksi klasifikasi',
     $status,
     $fileName
   ]);
@@ -132,11 +132,9 @@ require __DIR__ . '/../layouts/navbar.php';
 
     <!-- Tindak Lanjut Form -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200 bg-primary-50">
+      <div class="px-6 py-4 border-b border-gray-200 bg-white">
         <h2 class="text-lg font-bold text-gray-800 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
+        
           Form Tindak Lanjut
         </h2>
       </div>
@@ -144,10 +142,10 @@ require __DIR__ . '/../layouts/navbar.php';
       <div class="p-6">
         <form method="POST" enctype="multipart/form-data" class="space-y-5">
 
-          <!-- Klasifikasi AI -->
+          <!-- Klasifikasi -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Klasifikasi (Konfirmasi/Koreksi AI)
+              Klasifikasi (Konfirmasi/Koreksi)
             </label>
             <select name="prediksi_label" required
               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
@@ -160,7 +158,7 @@ require __DIR__ . '/../layouts/navbar.php';
                 </option>
               <?php endforeach; ?>
             </select>
-            <p class="text-xs text-gray-500 mt-1">Prediksi AI saat ini: <span class="font-medium"><?= htmlspecialchars($pengaduan['prediksi_label']) ?></span></p>
+            <p class="text-xs text-gray-500 mt-1">Klasifikasi saat ini: <span class="font-medium"><?= htmlspecialchars($pengaduan['prediksi_label']) ?></span></p>
           </div>
 
           <!-- Status -->

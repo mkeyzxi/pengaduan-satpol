@@ -100,7 +100,7 @@ require __DIR__ . '/../layouts/navbar.php';
             <tr>
               <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
               <th class="px-6 py-3 text-left text-sm font-semibold">Deskripsi</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold">Prediksi AI</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold">Klasifikasi</th>
               <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
               <th class="px-6 py-3 text-left text-sm font-semibold">Waktu</th>
               <th class="px-6 py-3 text-left text-sm font-semibold">Aksi</th>

@@ -347,5 +347,5 @@ Kontribusi selalu diterima! Silakan buat **Pull Request** atau buka **Issue** un
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/mkeyzxi">mkeyzxi</a>
+  Made with ❤️ by <a href="https://github.com/mkeyzxi">Ari Marhaban & mkeyzxi</a>
 </p>
