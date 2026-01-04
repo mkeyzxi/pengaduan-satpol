@@ -1,9 +1,10 @@
 const CACHE_NAME = 'pengaduan-satpolpp-v1';
 const OFFLINE_URL = '/pengaduan/public/offline.html';
 
-// Assets to cache on install
+// Only explicit static assets (avoid caching directory roots or dynamic PHP responses)
 const STATIC_ASSETS = [
-    '/pengaduan/public/',
+  '/pengaduan/index.php',
+    '/pengaduan/public/offline.html',
     '/pengaduan/public/style/style.css',
     '/pengaduan/public/js/pwa-register.js',
     '/pengaduan/public/icons/icon-192x192.png',
@@ -58,41 +59,47 @@ self.addEventListener('fetch', (event) => {
     if (event.request.url.includes('/app/')) {
         return;
     }
+    // Special handling for navigation requests (pages)
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    // Only cache successful navigation responses
+                    if (response && response.ok) {
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(OFFLINE_URL))
+        );
+        return;
+    }
 
+    // Default network-first for other GET requests, but only cache successful responses
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Clone the response before caching
-                const responseToCache = response.clone();
-                
-                // Cache successful responses for static assets
-                if (response.status === 200) {
-                    caches.open(CACHE_NAME)
-                        .then((cache) => {
-                            cache.put(event.request, responseToCache);
-                        });
+                if (!response || !response.ok) {
+                    // Do not cache unsuccessful responses
+                    return response;
                 }
-                
+
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseToCache);
+                });
+
                 return response;
             })
             .catch(() => {
-                // Network failed, try to serve from cache
-                return caches.match(event.request)
-                    .then((cachedResponse) => {
-                        if (cachedResponse) {
-                            return cachedResponse;
-                        }
-                        
-                        // If request is for a page, show offline page
-                        if (event.request.mode === 'navigate') {
-                            return caches.match(OFFLINE_URL);
-                        }
-                        
-                        return new Response('Offline', {
-                            status: 503,
-                            statusText: 'Service Unavailable'
-                        });
+                return caches.match(event.request).then((cachedResponse) => {
+                    if (cachedResponse) return cachedResponse;
+                    return new Response('Offline', {
+                        status: 503,
+                        statusText: 'Service Unavailable'
                     });
+                });
             })
     );
 });
