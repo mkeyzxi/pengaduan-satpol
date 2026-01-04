@@ -2,7 +2,7 @@
 	"name": "Pengaduan Masyarakat - Satpol PP",
 	"short_name": "Pengaduan",
 	"description": "Sistem Pengaduan Masyarakat Satpol PP - Laporkan pengaduan Anda kepada Satpol PP",
-	"start_url": "/pengaduan/public/",
+	"start_url": "/pengaduan/",
 	"display": "standalone",
 	"orientation": "portrait-primary",
 	"background_color": "#f8faf5",
